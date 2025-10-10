@@ -10,7 +10,8 @@
 #include "col_gridgen.h"
 
 namespace dr = drjit; // For nanothread
-#define MIN_EDGE_LEN 1e-5
+//#define MIN_EDGE_LEN 1e-5
+#define MIN_EDGE_LEN 0
 #define parallel_bezier 0
 #define insideness_check 1
 
@@ -312,6 +313,7 @@ std::vector<uint32_t> one_column_simp = {0, 1, 2, 3};
 
 bool gridRefine(mtet::MTetMesh &grid, vertExtrude &vertexMap, insidenessMap &insideMap, const std::function<std::pair<Scalar, Eigen::RowVector4d>(Eigen::RowVector4d)> func, const double threshold, const double traj_threshold, const int max_splits, std::array<double, timer_amount>& profileTimer, std::array<size_t, timer_amount>& profileCount){
     init5CGrid(3, grid, func, MAX_TIME, vertexMap);
+    double min_tet_ratio = 1.0;
     ///
     /// Initiate queue: timeQ and spaceQ
     auto compTime = [](std::tuple<mtet::Scalar, mtet::TetId, mtet::VertexId, int> timeSub0,
@@ -357,17 +359,13 @@ bool gridRefine(mtet::MTetMesh &grid, vertExtrude &vertexMap, insidenessMap &ins
             baseCoord[i] = baseVerts[i]->vert4dList[0].coord;
         }
         {
-            const Eigen::Vector3d A = baseCoord[0].head<3>().transpose();
-            const Eigen::Vector3d B = baseCoord[1].head<3>().transpose();
-            const Eigen::Vector3d C = baseCoord[2].head<3>().transpose();
-            const Eigen::Vector3d D = baseCoord[3].head<3>().transpose();
-            
-            // Build edge matrix [B-A, C-A, D-A] and take |det|/6
-            Eigen::Matrix3d M;
-            M.col(0) = B - A;
-            M.col(1) = C - A;
-            M.col(2) = D - A;
-            if (std::abs(M.determinant()) / 6.0 < 1e-12) insideMap[vs] = true;
+            std::valarray<double> p0(baseCoord[0].data(), 3);
+            std::valarray<double> p1(baseCoord[1].data(), 3);
+            std::valarray<double> p2(baseCoord[2].data(), 3);
+            std::valarray<double> p3(baseCoord[3].data(), 3);
+            min_tet_ratio = std::min(min_tet_ratio, tet_radius_ratio({p0, p1, p2, p3}));
+            if (min_tet_ratio < 1e-5)
+                insideMap[vs] = true;
         }
         /// Compute longest spatial edge
         longest_edge_length = 0;
@@ -879,6 +877,6 @@ bool gridRefine(mtet::MTetMesh &grid, vertExtrude &vertexMap, insidenessMap &ins
 #endif
         }
     }
-    std::cout << "Temporal splits: " << temporal_splits << " Spatial splits " << spatial_splits << std::endl;
+    std::cout << "Temporal splits: " << temporal_splits << " Spatial splits " << spatial_splits << " Minimum tet radius ratio: " << min_tet_ratio << std::endl;
     return true;
 }

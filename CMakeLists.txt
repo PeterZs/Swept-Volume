@@ -45,6 +45,7 @@ include(nlohmann-json)
 include(nanothread)
 include(mtet)
 include(mtetcol)
+include(mshio)
 include(unordered_dense)
 include(smallvector)
 include(libigl)
@@ -65,6 +66,7 @@ target_link_libraries(adaptive_column_grid
     Eigen3::Eigen
     mtet::mtet 
     mtetcol::mtetcol
+    mshio::mshio
     nanothread::nanothread
     nlohmann_json::nlohmann_json
     smallvector::smallvector

@@ -115,8 +115,6 @@ int main(int argc, const char *argv[])
                 gradient.template head<3>() << xyz_grad;
                 point_velocity = (-Rt.inverse()*VRt*Rt.inverse()*(P.transpose() - xt.transpose()) - Rt.inverse()*vt.transpose()).transpose();
                 gradient(3) =  (-s) * cp.dot(point_velocity);
-                std::cout << s * cp.dot(point_velocity) << std::endl;
-                std::cout << "value: " << value << std::endl;
                 return {value, gradient};
             };
         } else if (args.function_file == "elbow") {
@@ -324,12 +322,13 @@ int main(int argc, const char *argv[])
     size_t num_triangles = isocontour.get_num_cycles();
     vertices.resize(num_vertices, 3);
     faces.resize(num_triangles, 3);
+    TimeMap timeMap;
     for (size_t i = 0; i < num_vertices; i++){
-        Eigen::RowVector3d coord;
         auto pos = isocontour.get_vertex(i);
         vertices(i,0) = pos[0];
         vertices(i,1) = pos[1];
         vertices(i,2) = pos[2];
+        insert(timeMap, vertices.row(i), pos[3]);
     }
     for (size_t i = 0; i < num_triangles; i++){
         size_t ind = 0;
@@ -365,6 +364,10 @@ int main(int argc, const char *argv[])
         Eigen::VectorXi J;
         igl::remove_unreferenced(out_vertices, out_faces[i], V_clean, F_clean, I, J);
         igl::write_triangle_mesh(output_path + "/" + std::to_string(i) + ".obj", V_clean, F_clean);
+        Eigen::VectorXd labels = propagate_labels_bfs(V_clean, F_clean, timeMap);
+        backfill_timeMap_from_labels(V_clean, labels, timeMap);
+        mshio::MshSpec spec = generate_spec(V_clean, F_clean, timeMap);
+        mshio::save_msh(output_path + "/" + std::to_string(i) + ".msh", spec);
     }
 #if batch_stats
     std::string stats_file = "stats.json";

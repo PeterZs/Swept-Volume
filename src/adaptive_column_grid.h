@@ -217,4 +217,47 @@ struct TetEqual
 /// A mount of a boolean tag to every 3D tet to represent if the column is marked as "inside" of the sweep
 using insidenessMap = ankerl::unordered_dense::map<std::span<mtet::VertexId, 4>, bool, TetHash, TetEqual>;
 
+constexpr double kEps = 1e-8;
+
+// Integer-binned key so hashing/equality are stable for floating inputs.
+struct QuantizedRowVec3 {
+  std::int64_t q0, q1, q2;
+
+  static QuantizedRowVec3 from(const Eigen::RowVector3d& v) {
+    auto q = [](double x) -> std::int64_t {
+      // Put x into bins of width kEps using floor (stable for negatives too).
+      return static_cast<std::int64_t>(std::floor(x / kEps));
+    };
+    return { q(v[0]), q(v[1]), q(v[2]) };
+  }
+
+  bool operator==(const QuantizedRowVec3& o) const noexcept {
+    return q0 == o.q0 && q1 == o.q1 && q2 == o.q2;
+  }
+};
+
+struct QuantizedHash {
+  std::size_t operator()(const QuantizedRowVec3& k) const noexcept {
+    // hash_combine-like mixing
+    auto hc = std::hash<std::int64_t>{};
+    std::size_t h = 0;
+    auto combine = [&](std::int64_t x){
+      h ^= hc(x) + 0x9e3779b97f4a7c15ULL + (h<<6) + (h>>2);
+    };
+    combine(k.q0); combine(k.q1); combine(k.q2);
+    return h;
+  }
+};
+
+using TimeMap = std::unordered_map<QuantizedRowVec3, double, QuantizedHash>;
+
+// Helper API
+inline void insert(TimeMap& m, const Eigen::RowVector3d& key, double value) {
+  m[QuantizedRowVec3::from(key)] = value;
+}
+
+inline TimeMap::const_iterator find(const TimeMap& m, const Eigen::RowVector3d& key) {
+  return m.find(QuantizedRowVec3::from(key));
+}
+
 #endif /* adaptive_column_grid_h */

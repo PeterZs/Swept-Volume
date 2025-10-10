@@ -10,6 +10,7 @@
 
 
 #include "adaptive_column_grid.h"
+#include <mshio/mshio.h>
 
 void convert_4d_grid_col(mtet::MTetMesh grid,
                          vertExtrude vertexMap,
@@ -25,5 +26,20 @@ void convert_4d_grid_mtetcol(mtet::MTetMesh grid,
                              std::vector<std::vector<double>> &time,
                              std::vector<std::vector<double>> &values,
                              bool cyclic);
+
+mshio::MshSpec generate_spec(
+                             const Eigen::MatrixXd& V,
+                             const Eigen::MatrixXi& F,
+                             TimeMap timeMap);
+
+Eigen::VectorXd propagate_labels_bfs(
+                                     const Eigen::MatrixXd& V,   // n x 3
+                                     const Eigen::MatrixXi& F,   // m x 3
+                                     const TimeMap& timeMap);
+
+void backfill_timeMap_from_labels(
+                                  const Eigen::MatrixXd& V,
+                                  const Eigen::VectorXd& L,
+                                  TimeMap& timeMap);
 
 #endif /* io_h */

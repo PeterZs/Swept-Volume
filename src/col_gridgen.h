@@ -12,6 +12,7 @@
 #include <mtetcol/simplicial_column.h>
 #include "adaptive_column_grid.h"
 #include "ref_crit.h"
+#include "tet_quality.h"
 #include "timer.h"
 
 /// Create a column-wise 4D grid data structure. It contains a base 3D tetrahedra grid. On top of each vertex and tetrahedra, there sits a column of 4D data. For a 3D vertex, there is a list of 4D vertices that only differ in the fourth coordinate. For a 3D tet, there is a list of 4D 5-cell/simplex that two of its tetrahedra faces can be projected down to the same 3D tet, and three of the faces are projected down to 2D triangular faces.
