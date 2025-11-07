@@ -1655,7 +1655,7 @@ std::pair<Scalar, Eigen::RowVector4d> nested_balls(Eigen::RowVector4d inputs) {
                 Scalar d = p[0] * p[0] + p[1] * p[1] + p[2] * p[2];
                 if (d < r1) return r1 - d;
                 if (d > r2) return d - r2;
-                return -std::min(d - 0.01, 0.09 - d);
+                return -std::min(d - r1, r2 - d);
             },
             [](std::array<Scalar, 3> p) {
                 constexpr std::array<Scalar, 3> c{0.2, 0.5, 0.5};
