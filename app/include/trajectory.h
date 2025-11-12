@@ -776,7 +776,7 @@ std::pair<Scalar, Eigen::RowVector4d> sphere_spiral(Eigen::RowVector4d inputs) {
     static stf::SweepFunction<3> sweep_function(sphere, polybezier);
 
     Scalar value = sweep_function.value({inputs(0), inputs(1), inputs(2)}, inputs(3));
-    auto gradient = sweep_function.finite_difference_gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
+    auto gradient = sweep_function.gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
     return {value, Eigen::RowVector4d(gradient[0], gradient[1], gradient[2], gradient[3])};
 }
 
@@ -865,7 +865,7 @@ std::pair<Scalar, Eigen::RowVector4d> brush_stroke_blending(Eigen::RowVector4d i
     auto& sweep_function = blend;
 
     Scalar value = sweep_function.value({inputs(0), inputs(1), inputs(2)}, inputs(3));
-    auto gradient = sweep_function.finite_difference_gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
+    auto gradient = sweep_function.gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
     return {value, Eigen::RowVector4d(gradient[0], gradient[1], gradient[2], gradient[3])};
 }
 
@@ -1201,7 +1201,7 @@ std::pair<Scalar, Eigen::RowVector4d> star_I(Eigen::RowVector4d inputs) {
     static stf::SweepFunction<3> sweep_function(sdf, translation);
 
     Scalar value = sweep_function.value({inputs(0), inputs(1), inputs(2)}, inputs(3));
-    auto gradient = sweep_function.finite_difference_gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
+    auto gradient = sweep_function.gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
     return {value, Eigen::RowVector4d(gradient[0], gradient[1], gradient[2], gradient[3])};
 }
 
@@ -1422,19 +1422,19 @@ std::pair<Scalar, Eigen::RowVector4d> loopDloop_with_offset_v3(Eigen::RowVector4
     auto& sweep_function = offset_function;
 
     Scalar value = sweep_function.value({inputs(0), inputs(1), inputs(2)}, inputs(3));
-    auto gradient = sweep_function.finite_difference_gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
+    auto gradient = sweep_function.gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
     return {value, Eigen::RowVector4d(gradient[0], gradient[1], gradient[2], gradient[3])};
 }
 
 std::pair<Scalar, Eigen::RowVector4d> VIPSS_blend(Eigen::RowVector4d inputs) {
     std::filesystem::path data_dir(DATA_DIR);
     static stf::Duchon doghead(
-                               data_dir / "test" / "dog_head" / "doghead_800.xyz",
-                               data_dir / "test" / "dog_head" / "doghead_800_coeff",
+                               data_dir / "vipss_data" / "doghead_800.xyz",
+                               data_dir / "vipss_data" / "doghead_800_coeff",
                                {0, 0, 0}, 1, true);
     static stf::Duchon kitten(
-                               data_dir / "test" / "kitten" / "kitten_893.xyz",
-                               data_dir / "test" / "kitten" / "kitten_893.coeff",
+                               data_dir / "vipss_data" / "kitten_893.xyz",
+                               data_dir / "vipss_data" / "kitten_893_coeff",
                                {0, 0, 0}, 1, true);
     static stf::Rotation<3> rotation({0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, 90);
     static stf::PolyBezier<3> bezier({{5, 4., 3.}, {5, 7., 4.5}, {5, 2.5, 4.5}, {5, 5.5, 3.}});
@@ -1443,7 +1443,7 @@ std::pair<Scalar, Eigen::RowVector4d> VIPSS_blend(Eigen::RowVector4d inputs) {
     static stf::SweepFunction<3> kitten_sweep(kitten, bezier);
     static stf::InterpolateFunction<3> sweep_function(kitten_sweep, dog_sweep);
     Scalar value = sweep_function.value({inputs(0), inputs(1), inputs(2)}, inputs(3));
-    auto gradient = sweep_function.finite_difference_gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
+    auto gradient = sweep_function.gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
     return {value, Eigen::RowVector4d(gradient[0], gradient[1], gradient[2], gradient[3])};
 }
 
@@ -1470,7 +1470,7 @@ std::pair<Scalar, Eigen::RowVector4d> VIPSS_blend2(Eigen::RowVector4d inputs) {
     static stf::SweepFunction<3> kitten_sweep(kitten, bezierRot);
     static stf::InterpolateFunction<3> sweep_function(kitten_sweep, dog_sweep);
     Scalar value = sweep_function.value({inputs(0), inputs(1), inputs(2)}, inputs(3));
-    auto gradient = sweep_function.finite_difference_gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
+    auto gradient = sweep_function.gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
     return {value, Eigen::RowVector4d(gradient[0], gradient[1], gradient[2], gradient[3])};
 }
 
@@ -1494,7 +1494,7 @@ std::pair<Scalar, Eigen::RowVector4d> VIPSS_blend3(Eigen::RowVector4d inputs) {
     static stf::SweepFunction<3> kitten_sweep(botijo, bezierRot);
     static stf::InterpolateFunction<3> sweep_function(kitten_sweep, dog_sweep);
     Scalar value = sweep_function.value({inputs(0), inputs(1), inputs(2)}, inputs(3));
-    auto gradient = sweep_function.finite_difference_gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
+    auto gradient = sweep_function.gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
     return {value, Eigen::RowVector4d(gradient[0], gradient[1], gradient[2], gradient[3])};
 }
 
@@ -1539,7 +1539,7 @@ std::pair<Scalar, Eigen::RowVector4d> mesh_I(Eigen::RowVector4d inputs) {
     static stf::SweepFunction<3> sweep_function(sdf, transform);
 
     Scalar value = sweep_function.value({inputs(0), inputs(1), inputs(2)}, inputs(3));
-    auto gradient = sweep_function.finite_difference_gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
+    auto gradient = sweep_function.gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
     return {value, Eigen::RowVector4d(gradient[0], gradient[1], gradient[2], gradient[3])};
 }
 
@@ -1557,7 +1557,7 @@ std::pair<Scalar, Eigen::RowVector4d> mesh_I(Eigen::RowVector4d inputs) {
      static stf::SweepFunction<3> sweep_function(wheel, transform);
 
      Scalar value = sweep_function.value({inputs(0), inputs(1), inputs(2)}, inputs(3));
-     auto gradient = sweep_function.finite_difference_gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
+     auto gradient = sweep_function.gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
      return {value, Eigen::RowVector4d(gradient[0], gradient[1], gradient[2], gradient[3])};
  }
 
@@ -1580,7 +1580,7 @@ std::pair<Scalar, Eigen::RowVector4d> wheel_I_shrink(Eigen::RowVector4d inputs) 
     static stf::SweepFunction<3> shrink_sweep(wheel_shrink, transform);
     static stf::InterpolateFunction<3> sweep_function(wheel_function, shrink_sweep);
     Scalar value = sweep_function.value({inputs(0), inputs(1), inputs(2)}, inputs(3));
-    auto gradient = sweep_function.finite_difference_gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
+    auto gradient = sweep_function.gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
     return {value, Eigen::RowVector4d(gradient[0], gradient[1], gradient[2], gradient[3])};
 }
 
@@ -1597,7 +1597,7 @@ std::pair<Scalar, Eigen::RowVector4d> tangle_cube_roll(Eigen::RowVector4d inputs
         [](stf::Scalar t) { return 0; });
     auto& sweep_function = offset_function;
     Scalar value = sweep_function.value({inputs(0), inputs(1), inputs(2)}, inputs(3));
-    auto gradient = sweep_function.finite_difference_gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
+    auto gradient = sweep_function.gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
     return {value, Eigen::RowVector4d(gradient[0], gradient[1], gradient[2], gradient[3])};
 }
 
@@ -1677,7 +1677,7 @@ std::pair<Scalar, Eigen::RowVector4d> ball_genus_roll(Eigen::RowVector4d inputs)
         [](stf::Scalar t) { return -0.068 ; });
     auto& sweep_function = offset_function;
     Scalar value = sweep_function.value({inputs(0), inputs(1), inputs(2)}, inputs(3));
-    auto gradient = sweep_function.finite_difference_gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
+    auto gradient = sweep_function.gradient({inputs(0), inputs(1), inputs(2)}, inputs(3));
     return {value, Eigen::RowVector4d(gradient[0], gradient[1], gradient[2], gradient[3])};
 }
 

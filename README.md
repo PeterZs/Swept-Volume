@@ -22,7 +22,7 @@ The program `general_sweep` will be generated in the build file.
 
 ### Dependency
 
-Currently, there are some third-party libraries that are not yet open sourced. We are waiting for some internal authorizations. Please stay tuned for the full release coming soon.
+Currently, all third-party libraries are now open-sourced.
 
 ## Usage
 
