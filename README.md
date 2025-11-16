@@ -39,7 +39,7 @@ The input of this program is any generalized sweep that is represented by a smoo
 
 ### Positional Arguments
 
-- `grid` : The path to the initial grid file that will be used for grid generation. This file can be either a `.msh` or `.json` file. When a `.json` file is provided, it will be converted to a `.msh` file internally. The format to specify an initial grid can be found [here](https://github.com/Jurwen/Swept-Volume/blob/main/data/test/grid_1.json);
+- `grid` : The path to the initial grid file that will be used for grid generation. This file can be either a `.msh` or `.json` file. When a `.json` file is provided, it will be converted to a `.msh` file internally. The format to specify an initial grid can be found [here](https://github.com/Jurwen/Swept-Volume/blob/main/data/test/grid_1.json). For this file format, you only need to specify the bounding box of the initial grid and how "dense" this initial grid is, which is controlled by the `resolution` parameter. The higher the resolution, the denser the initial mesh.
 - `output` : The output directory path where all generated files will be saved. The tool will create this directory if it doesn't exist. `.obj` files only contain the mesh, while `.msh` files have additional time info. Output files include:
   - `envelope.msh`, `envelope.obj` : The mesh before arrangement (if `SAVE_CONTOUR` is enabled)
   - (`0.obj`, `1.obj`, ...), (`0.msh`, `1.msh`, ...) : Separated cell components with 0 winding number.
@@ -52,11 +52,9 @@ The input of this program is any generalized sweep that is represented by a smoo
 - `-f, --function <file>` : Specify an implicit function file or predefined function name. Can be:
   - A predefined function name (e.g., `fertility_v4`, `kitten_dog`, `letter_L_blend`, `ball_genus_roll`, `tangle_chair_S`, `star_S`, etc.)
   - See `trajectory.h` for all available predefined functions
-- `-t, --threshold <value>` : Set the threshold value for grid generation (default: 0.0005). Lower values produce coarser grids. This is a DOUBLE value that controls the precision level.
-- `--tt, --traj-threshold <value>` : Set the threshold value for trajectory processing (default: 0.005). This is a DOUBLE value that controls trajectory precision.
-- `-m, --max-splits <number>` : Set the maximum number of splits for grid generation to avoid infinite subdivision (default: unlimited). This is a sanity parameter to prevent degeneracies.
-- `--without-snapping` : Disable vertex snapping in the iso-surfacing step.
-- `--without-optimal-triangulation` : Disable optimal triangulation in the iso-surfacing triangulation step. 
+- `--ee, --epsilon-env <value>` : Set the environment threshold (default: 0.0005). Lower values produce finer grids for the sweep function. This is a DOUBLE value that controls the mesh precision. This parameter corresponds to the `epsilon_env` variable stated in the paper
+- `--es, --epsilon-sil <value>` : Set the silhouette threshold (default: 0.005). Lower values produce finer grids for the silhouette function.This is a DOUBLE value that controls trajectory precision. This parameter corresponds to the `epsilon_sil` variable stated in the paper
+- `-i, --inside-check`: Whether the grid generation will do a full grid refinement considering regions of the envelope that is inside the sweep. Turning this on will generate a complete smooth envelope with fine details for inside regions. Note that this tag may add considerable amount of time and memory. 
 
 ## Example:
 
