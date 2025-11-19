@@ -44,7 +44,7 @@ int main(int argc, const char *argv[])
     app.add_option("grid", args.grid_file, "Initial grid file")->required();
     app.add_option("output", args.output_path, "Output path")->required();
     app.add_option("-f,--function", args.function_file, "Implicit function file");
-    app.add_option("-ee,--epsilon-env", args.threshold, "Environment threshold");
+    app.add_option("--ee,--epsilon-env", args.threshold, "Envelope threshold");
     app.add_option("--es, --epsilon-sil", args.traj_threshold, "Silhouette threshold");
     app.add_flag("-i, --inside-check", args.insideness_check, "Turn on the refinement for the inside regions of the envelope");
     app.add_option("-m,--max-splits", args.max_splits, "Maximum number of splits");
